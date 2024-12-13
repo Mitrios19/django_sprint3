@@ -1,10 +1,8 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import Http404
 from django.core.paginator import Paginator
-from django.views.generic import ListView
 from django.utils import timezone
 
-from .models import Category, Location, Post
+from .models import Category, Post
 
 
 def index(request):
@@ -31,10 +29,15 @@ def post_detail(request, post_id):
     context = {'post': post}
     return render(request, template, context)
 
+
 def category_posts(request, category_slug):
     now = timezone.now()
     template = 'blog/category.html'
-    category = get_object_or_404(Category, slug=category_slug, is_published=True)
+    category = get_object_or_404(
+        Category,
+        slug=category_slug,
+        is_published=True
+    )
     posts = Post.objects.filter(
         category=category,
         is_published=True,

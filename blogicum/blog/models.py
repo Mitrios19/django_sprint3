@@ -26,10 +26,10 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
-        #ordering = ('output_order',) сортировака
 
     def __str__(self):
         return self.title
+
 
 class Location(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название места')
@@ -46,10 +46,10 @@ class Location(models.Model):
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
-        #ordering = ('output_order',) сортировака
 
     def __str__(self):
         return self.name
+
 
 class Post(models.Model):
     title = models.CharField(max_length=256, verbose_name='Заголовок')
@@ -80,12 +80,14 @@ class Post(models.Model):
         verbose_name='Опубликовано',
         help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлено')
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Добавлено'
+    )
 
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-        #ordering = ('output_order',) сортировака
 
     def __str__(self):
         return self.title
