@@ -23,7 +23,7 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post.objects.filter(
         is_published=True,
         category__is_published=True
-        ),
+    ),
         pk=post_id)
     template = 'blog/detail.html'
     context = {'post': post}
