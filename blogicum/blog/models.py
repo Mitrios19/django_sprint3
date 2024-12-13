@@ -49,7 +49,7 @@ class Location(models.Model):
         #ordering = ('output_order',) сортировака
 
     def __str__(self):
-        return self.title
+        return self.name
 
 class Post(models.Model):
     title = models.CharField(max_length=256, verbose_name='Заголовок')
