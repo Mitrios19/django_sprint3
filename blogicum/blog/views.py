@@ -6,12 +6,13 @@ from .models import Category, Post
 
 
 def index(request):
-    now = timezone.now()
+    now = timezone.localtime(timezone.now())  # Преобразуем в локальное время
     template = 'blog/index.html'
     posts = Post.objects.order_by('id').filter(
         is_published=True,
-        created_at__lte=now,
-        category__is_published=True)
+        pub_date__lte=now,
+        category__is_published=True
+        )
     paginator = Paginator(posts, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -41,7 +42,7 @@ def category_posts(request, category_slug):
     posts = Post.objects.filter(
         category=category,
         is_published=True,
-        created_at__lte=now
+        pub_date__lte=now
     ).order_by('-created_at')
     context = {
         'category': category,
