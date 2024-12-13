@@ -21,7 +21,7 @@ class Category(models.Model):
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Дата создания'
+        verbose_name='Добавлено'
     )
 
     class Meta:
