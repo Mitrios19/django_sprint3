@@ -10,7 +10,8 @@ class Category(models.Model):
     slug = models.SlugField(
         unique=True,
         verbose_name='Идентификатор',
-        help_text='Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.'
+        help_text='Идентификатор страницы для URL; разрешены символы латиницы\
+        ,цифры, дефис и подчёркивание.'
     )
     is_published = models.BooleanField(
         default=True,
@@ -58,7 +59,8 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор публикации',
-        help_text='Если установить дату и время в будущем — можно делать отложенные публикации.'
+        help_text='Если установить дату и время в будущем — можно делать \
+        отложенные публикации.'
     )
     location = models.ForeignKey(
         Location,
