@@ -1,70 +1,47 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import Http404
+from django.core.paginator import Paginator
+from django.views.generic import ListView
+from django.utils import timezone
 
-
-posts = [
-    {
-        'id': 0,
-        'location': 'Остров отчаянья',
-        'date': '30 сентября 1659 года',
-        'category': 'travel',
-        'text': '''Наш корабль, застигнутый в открытом море
-                страшным штормом, потерпел крушение.
-                Весь экипаж, кроме меня, утонул; я же,
-                несчастный Робинзон Крузо, был выброшен
-                полумёртвым на берег этого проклятого острова,
-                который назвал островом Отчаяния.''',
-    },
-    {
-        'id': 1,
-        'location': 'Остров отчаянья',
-        'date': '1 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Проснувшись поутру, я увидел, что наш корабль сняло
-                с мели приливом и пригнало гораздо ближе к берегу.
-                Это подало мне надежду, что, когда ветер стихнет,
-                мне удастся добраться до корабля и запастись едой и
-                другими необходимыми вещами. Я немного приободрился,
-                хотя печаль о погибших товарищах не покидала меня.
-                Мне всё думалось, что, останься мы на корабле, мы
-                непременно спаслись бы. Теперь из его обломков мы могли бы
-                построить баркас, на котором и выбрались бы из этого
-                гиблого места.''',
-    },
-    {
-        'id': 2,
-        'location': 'Остров отчаянья',
-        'date': '25 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Всю ночь и весь день шёл дождь и дул сильный
-                порывистый ветер. 25 октября.  Корабль за ночь разбило
-                в щепки; на том месте, где он стоял, торчат какие-то
-                жалкие обломки,  да и те видны только во время отлива.
-                Весь этот день я хлопотал  около вещей: укрывал и
-                укутывал их, чтобы не испортились от дождя.''',
-    },
-]
-
-available_id = {posts[i]['id']: i for i in range(len(posts))}
+from .models import Category, Location, Post
 
 
 def index(request):
+    now = timezone.now()
     template = 'blog/index.html'
-    context = {'posts': reversed(posts)}
+    posts = Post.objects.order_by('id').filter(
+        is_published=True,
+        created_at__lte=now,
+        category__is_published=True)
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
     return render(request, template, context)
 
 
 def post_detail(request, post_id):
+    post = get_object_or_404(Post.objects.filter(
+            is_published=True,
+            category__is_published=True
+        ),
+        pk=post_id)
     template = 'blog/detail.html'
-    if post_id in available_id:
-
-        context = {'post': posts[available_id[post_id]]}
-        return render(request, template, context)
-    else:
-        raise Http404(f'Post {post_id} Not Found')
-
+    context = {'post': post}
+    return render(request, template, context)
 
 def category_posts(request, category_slug):
+    now = timezone.now()
     template = 'blog/category.html'
-    context = {'post': category_slug}
+    category = get_object_or_404(Category, slug=category_slug, is_published=True)
+    posts = Post.objects.filter(
+        category=category,
+        is_published=True,
+        created_at__lte=now
+    ).order_by('-created_at')
+    context = {
+        'category': category,
+        'post_list': posts
+    }
     return render(request, template, context)
